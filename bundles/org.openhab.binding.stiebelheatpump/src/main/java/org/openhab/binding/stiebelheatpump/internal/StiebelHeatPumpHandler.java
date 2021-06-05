@@ -102,21 +102,7 @@ public class StiebelHeatPumpHandler extends BaseThingHandler {
         }
         logger.debug("Received command {} for channelUID {}", command, channelUID);
         String channelId = channelUID.getId();
-        // int retry = 0;
-        //
-        // while (communicationInUse.get() & (retry < MAXRETRY)) {
-        // try {
-        // Thread.sleep(config.waitingTime);
-        // } catch (InterruptedException e) {
-        // logger.debug("Could not get access to heatpump, communication is in use {} !", retry);
-        // }
-        // retry++;
-        // }
-        // if (communicationInUse.get()) {
-        // logger.debug("Could not get access to heatpump, communication is in use ! Final");
-        // return;
-        // }
-        // communicationInUse.set(true);
+
         communicationInUse.lock();
 
         try {
@@ -348,10 +334,6 @@ public class StiebelHeatPumpHandler extends BaseThingHandler {
                 return;
             }
 
-            // if (communicationInUse.get()) {
-            // logger.debug("Communication service is in use , skip refresh data task this time.");
-            // return;
-            // }
             Map<String, Object> data = sendRequests(scheduledRequests.getRequests());
 
             Instant end = Instant.now();
@@ -385,10 +367,7 @@ public class StiebelHeatPumpHandler extends BaseThingHandler {
      */
     private void startTimeRefresh() {
         timeRefreshJob = scheduler.scheduleWithFixedDelay(() -> {
-            // if (communicationInUse.get()) {
-            // return;
-            // }
-            // communicationInUse.set(true);
+
             communicationInUse.lock();
             logger.debug("Refresh time of heat pump.");
             try {
@@ -397,7 +376,6 @@ public class StiebelHeatPumpHandler extends BaseThingHandler {
             } catch (StiebelHeatPumpException e) {
                 logger.debug(e.getMessage());
             } finally {
-                // communicationInUse.set(false);
                 communicationInUse.unlock();
             }
         }, 1, 7, TimeUnit.DAYS);

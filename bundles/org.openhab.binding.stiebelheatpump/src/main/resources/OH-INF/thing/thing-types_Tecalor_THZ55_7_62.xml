@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <thing:thing-descriptions bindingId="stiebelheatpump"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
-	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
-
-
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+    xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+    
 	<thing-type id="Tecalor_THZ55_7_62">
 		<label>Tecalor heat pump THZ 5.5 7.62</label>
 		<description>Tecalor heat pump for THZ connecting via serial USB/RS232 interface to firmware version 7.62.

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <thing:thing-descriptions bindingId="stiebelheatpump"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
-	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+    xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
 	<channel-group-type id="channelGroupTypeVersion">
 		<label>Version</label>
@@ -377,7 +377,6 @@
 			<channel id="p31AmountOfUnlockedElectricalBoosterStages" typeId="fanStageSetting">
 				<label>P31 Amount of unlocked electrical booster stages</label>
 				<description>P31 Amount of unlocked electrical booster stages setting</description>
-				>
 			</channel>
 			<channel id="maxFlowTemperatureHeatingMode" typeId="maxFlowTemperatureSetting">
 				<label>Maximum flow temperature heating mode</label>

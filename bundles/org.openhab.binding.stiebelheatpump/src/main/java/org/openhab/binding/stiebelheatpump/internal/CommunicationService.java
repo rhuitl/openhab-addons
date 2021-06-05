@@ -362,6 +362,8 @@ public class CommunicationService {
             byte[] requestMessage = createRequestMessage(updateRecord.getRequestByte());
             byte[] response = getData(requestMessage);
             response = parser.fixDuplicatedBytes(response);
+            String bytes = DataParser.bytesToHex(response, true);
+            logger.debug("Parse bytes: {}", bytes);
             Object currentValue = parser.parseRecord(response, updateRecord);
 
             if (Arrays.equals(requestMessage, response)) {

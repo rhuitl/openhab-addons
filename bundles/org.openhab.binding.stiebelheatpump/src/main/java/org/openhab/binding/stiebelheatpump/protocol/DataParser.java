@@ -177,59 +177,58 @@ public class DataParser {
         // change response byte to setting command
         response[1] = SET;
         if (newValue instanceof Boolean) {
-            Boolean currentValueBoolean = (Boolean) currentValue;
             Boolean newValueBoolean = (Boolean) newValue;
-            if (currentValueBoolean.equals(newValueBoolean)) { // TODO: Stefan: if that is the case, the
-                                                               // CommunicationService#writeData will return already
-                                                               // before even calling us
-                return response;
-            }
+
             // set new bit values in a byte, this a valid for switch setting change
             if (recordDefinition.getBitPosition() > 0) {
                 // check will old implementation
                 byte[] abyte = new byte[] { response[recordDefinition.getPosition()] };
                 response[recordDefinition.getPosition()] = setBit(abyte, recordDefinition.getBitPosition(),
                         newValueBoolean)[0];
-                return response;
-            }
-        }
-        Short newValueShort = 0;
-        if (newValue instanceof Double) {
-            Double newValueDouble = (Double) newValue;
-            if (newValueDouble > recordDefinition.getMax() || newValueDouble < recordDefinition.getMin()) {
-                logger.warn("The record {} can not be set to value {} as allowed range is {}<-->{} !",
-                        recordDefinition.getChannelid(), newValue, recordDefinition.getMax(),
-                        recordDefinition.getMin());
-                throw new StiebelHeatPumpException("invalid value !");
-            }
-            newValueShort = (short) (newValueDouble / recordDefinition.getScale());
-        }
-
-        if (newValue instanceof Short) {
-            newValueShort = (Short) newValue;
-            if (newValueShort > recordDefinition.getMax() || newValueShort < recordDefinition.getMin()) {
-                logger.warn("The record {} can not be set to value {} as allowed range is {}<-->{} !",
-                        recordDefinition.getChannelid(), newValue, recordDefinition.getMax(),
-                        recordDefinition.getMin());
-                throw new StiebelHeatPumpException("invalid value !");
-            }
-        }
-
-        // create byte values for single / double byte values
-        // and update response
-        switch (recordDefinition.getLength()) {
-            case 1:
+                // return response;
+            } else {
+                short newValueShort = (short) ((newValueBoolean) ? 1 : 0);
                 byte newByteValue = shortToByte(newValueShort)[0];
                 response[recordDefinition.getPosition()] = newByteValue;
-                break;
-            case 2:
-                byte[] newByteValues = shortToByte(newValueShort);
-                int position = recordDefinition.getPosition();
-                response[position] = newByteValues[1];
-                response[position + 1] = newByteValues[0];
-                break;
-        }
+            }
+        } else {
+            Short newValueShort = 0;
+            if (newValue instanceof Double) {
+                Double newValueDouble = (Double) newValue;
+                if (newValueDouble > recordDefinition.getMax() || newValueDouble < recordDefinition.getMin()) {
+                    logger.warn("The record {} can not be set to value {} as allowed range is {}<-->{} !",
+                            recordDefinition.getChannelid(), newValue, recordDefinition.getMax(),
+                            recordDefinition.getMin());
+                    throw new StiebelHeatPumpException("invalid value !");
+                }
+                newValueShort = (short) (newValueDouble / recordDefinition.getScale());
+            }
 
+            if (newValue instanceof Short) {
+                newValueShort = (Short) newValue;
+                if (newValueShort > recordDefinition.getMax() || newValueShort < recordDefinition.getMin()) {
+                    logger.warn("The record {} can not be set to value {} as allowed range is {}<-->{} !",
+                            recordDefinition.getChannelid(), newValue, recordDefinition.getMax(),
+                            recordDefinition.getMin());
+                    throw new StiebelHeatPumpException("invalid value !");
+                }
+            }
+
+            // create byte values for single / double byte values
+            // and update response
+            switch (recordDefinition.getLength()) {
+                case 1:
+                    byte newByteValue = shortToByte(newValueShort)[0];
+                    response[recordDefinition.getPosition()] = newByteValue;
+                    break;
+                case 2:
+                    byte[] newByteValues = shortToByte(newValueShort);
+                    int position = recordDefinition.getPosition();
+                    response[position] = newByteValues[1];
+                    response[position + 1] = newByteValues[0];
+                    break;
+            }
+        }
         response[2] = this.calculateChecksum(response);
         this.addDuplicatedBytes(response);
         logger.debug("Updated record {} at position {} to value {}.", recordDefinition.getChannelid(),
