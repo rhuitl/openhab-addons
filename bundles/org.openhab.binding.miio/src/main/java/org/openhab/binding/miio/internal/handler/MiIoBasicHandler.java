@@ -19,14 +19,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.measure.Unit;
-import javax.measure.format.ParserException;
+import javax.measure.format.MeasurementParseException;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -130,8 +130,8 @@ public class MiIoBasicHandler extends MiIoAbstractHandler {
             }
             return;
         }
-        if (channelUID.getId().equals(CHANNEL_COMMAND)) {
-            cmds.put(sendCommand(command.toString()), command.toString());
+        if (handleCommandsChannels(channelUID, command)) {
+            forceStatusUpdate();
             return;
         }
         logger.debug("Locating action for {} channel '{}': '{}'", getThing().getUID(), channelUID.getId(), command);
@@ -161,7 +161,7 @@ public class MiIoBasicHandler extends MiIoAbstractHandler {
                                     qtc = ((QuantityType<?>) command).toUnit(unit);
                                 }
                             }
-                        } catch (ParserException e) {
+                        } catch (MeasurementParseException e) {
                             // swallow
                         }
                         if (qtc != null) {
@@ -263,13 +263,17 @@ public class MiIoBasicHandler extends MiIoAbstractHandler {
                     }
                 }
             }
-            updateDataCache.invalidateValue();
-            miIoScheduler.schedule(() -> {
-                updateData();
-            }, 3000, TimeUnit.MILLISECONDS);
+            forceStatusUpdate();
         } else {
             logger.debug("Actions not loaded yet, or none available");
         }
+    }
+
+    private void forceStatusUpdate() {
+        updateDataCache.invalidateValue();
+        miIoScheduler.schedule(() -> {
+            updateData();
+        }, 3000, TimeUnit.MILLISECONDS);
     }
 
     private @Nullable JsonElement miotTransform(MiIoBasicChannel miIoBasicChannel, @Nullable JsonElement value) {
@@ -367,7 +371,7 @@ public class MiIoBasicHandler extends MiIoAbstractHandler {
             return;
         }
         if (!hasChannelStructure) {
-            if (configuration.model == null || configuration.model.isEmpty()) {
+            if (configuration.model.isEmpty()) {
                 logger.debug("Model needs to be determined");
                 isIdentified = false;
             } else {
@@ -471,8 +475,8 @@ public class MiIoBasicHandler extends MiIoAbstractHandler {
             ChannelTypeUID channelTypeUID = new ChannelTypeUID(miChannel.getChannelType());
             if (channelTypeRegistry.getChannelType(channelTypeUID) != null) {
                 newChannel = newChannel.withType(channelTypeUID);
-                final LinkedHashSet<String> tags = miChannel.getTags();
-                if (tags != null && tags.size() > 0) {
+                final Set<String> tags = miChannel.getTags();
+                if (tags != null && !tags.isEmpty()) {
                     newChannel.withDefaultTags(tags);
                 }
             } else {
@@ -485,8 +489,8 @@ public class MiIoBasicHandler extends MiIoAbstractHandler {
         if (useGeneratedChannelType) {
             newChannel = newChannel
                     .withType(new ChannelTypeUID(BINDING_ID, model.toUpperCase().replace(".", "_") + "_" + channel));
-            final LinkedHashSet<String> tags = miChannel.getTags();
-            if (tags != null && tags.size() > 0) {
+            final Set<String> tags = miChannel.getTags();
+            if (tags != null && !tags.isEmpty()) {
                 newChannel.withDefaultTags(tags);
             }
         }
@@ -579,7 +583,7 @@ public class MiIoBasicHandler extends MiIoAbstractHandler {
                     } else {
                         String strVal = val.getAsString().toLowerCase();
                         updateState(basicChannel.getChannel(),
-                                strVal.equals("on") || strVal.equals("true") ? OnOffType.ON : OnOffType.OFF);
+                                "on".equals(strVal) || "true".equals(strVal) ? OnOffType.ON : OnOffType.OFF);
                     }
                     break;
                 case "color":
