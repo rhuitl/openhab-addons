@@ -218,7 +218,7 @@ public class HDPowerViewJUnitTests {
             Shade shade = null;
             try {
                 assertNotEquals(0, shadeId);
-                shade = webTargets.refreshShade(shadeId);
+                shade = webTargets.refreshShadePosition(shadeId);
                 assertNotNull(shade);
             } catch (HubProcessingException | HubMaintenanceException e) {
                 fail(e.getMessage());
@@ -351,10 +351,14 @@ public class HDPowerViewJUnitTests {
 
             pos = shadePos.getState(SECONDARY_ACTUATOR, ZERO_IS_OPEN);
             assertEquals(PercentType.class, pos.getClass());
-            assertEquals(65, ((PercentType) pos).intValue());
+            assertEquals(35, ((PercentType) pos).intValue());
 
             pos = shadePos.getState(PRIMARY_ACTUATOR, VANE_COORDS);
             assertEquals(UnDefType.class, pos.getClass());
+
+            assertEquals(3, shadeData.batteryStatus);
+
+            assertEquals(4, shadeData.signalStrength);
         } catch (JsonParseException e) {
             fail(e.getMessage());
         }
