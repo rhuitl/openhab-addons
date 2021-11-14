@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+import com.thoughtworks.xstream.security.AnyTypePermission;
 
 /**
  * Config parser class. This class parses the xml configuration file converts it
@@ -47,6 +48,7 @@ public class ConfigParser {
         ClassLoader classloader = this.getClass().getClassLoader();
 
         XStream xstream = new XStream(new StaxDriver());
+        xstream.addPermission(AnyTypePermission.ANY);
         xstream.setClassLoader(classloader);
         xstream.ignoreUnknownElements();
         xstream.processAnnotations(Record.class);
