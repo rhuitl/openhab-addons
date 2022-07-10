@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2021 Contributors to the openHAB project
+ * Copyright (c) 2010-2022 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -13,8 +13,15 @@
 package org.openhab.binding.miele.internal;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.openhab.binding.miele.internal.api.dto.DeviceMetaData;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.library.unit.SIUnits;
 import org.openhab.core.test.java.JavaTest;
@@ -26,8 +33,11 @@ import org.openhab.core.types.UnDefType;
  *
  * @author Jacob Laursen - Initial contribution
  */
-
+@NonNullByDefault
+@ExtendWith(MockitoExtension.class)
 public class DeviceUtilTest extends JavaTest {
+
+    private @NonNullByDefault({}) @Mock MieleTranslationProvider translationProvider;
 
     @Test
     public void bytesToHexWhenTopBitIsUsedReturnsCorrectString() {
@@ -59,12 +69,39 @@ public class DeviceUtilTest extends JavaTest {
     }
 
     @Test
+    public void getTemperatureStateColdValueReturns10Degrees() throws NumberFormatException {
+        assertEquals(new QuantityType<>(10, SIUnits.CELSIUS), DeviceUtil.getTemperatureState("-32760"));
+    }
+
+    @Test
     public void getTemperatureStateNonNumericValueThrowsNumberFormatException() {
         assertThrows(NumberFormatException.class, () -> DeviceUtil.getTemperatureState("A"));
     }
 
     @Test
-    public void getTemperatureStateNullValueThrowsNumberFormatException() {
-        assertThrows(NumberFormatException.class, () -> DeviceUtil.getTemperatureState(null));
+    public void getStateTextStateProviderHasPrecedence() {
+        assertEquals("I brug", this.getStateTextState("5", "Running", "miele.state.running", "I brug"));
+    }
+
+    @Test
+    public void getStateTextStateGatewayTextIsReturnedWhenKeyIsUnknown() {
+        assertEquals("Running", this.getStateTextState("-1", "Running"));
+    }
+
+    @Test
+    public void getStateTextStateKeyIsReturnedWhenUnknownByGatewayAndProvider() {
+        assertEquals("state.99", this.getStateTextState("99", null));
+    }
+
+    private String getStateTextState(String value, String localizedValue, String mockedKey, String mockedValue) {
+        when(translationProvider.getText(mockedKey, localizedValue)).thenReturn(mockedValue);
+        return getStateTextState(value, localizedValue);
+    }
+
+    private String getStateTextState(String value, @Nullable String localizedValue) {
+        var metaData = new DeviceMetaData();
+        metaData.LocalizedValue = localizedValue;
+
+        return DeviceUtil.getStateTextState(value, metaData, translationProvider).toString();
     }
 }

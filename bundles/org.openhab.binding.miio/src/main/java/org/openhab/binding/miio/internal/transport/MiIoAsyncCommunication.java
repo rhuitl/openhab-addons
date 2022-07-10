@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2021 Contributors to the openHAB project
+ * Copyright (c) 2010-2022 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -182,10 +182,7 @@ public class MiIoAsyncCommunication {
                             miIoSendCommand.getCloudServer());
                     updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
                 } else {
-                    String data = miIoSendCommand.getParams().isJsonArray()
-                            && miIoSendCommand.getParams().getAsJsonArray().size() > 0
-                                    ? miIoSendCommand.getParams().getAsJsonArray().get(0).toString()
-                                    : "";
+                    String data = miIoSendCommand.getParams().toString();
                     logger.debug("Custom cloud request send to url '{}' with data '{}'", miIoSendCommand.getMethod(),
                             data);
                     decryptedResponse = cloudConnector.sendCloudCommand(miIoSendCommand.getMethod(),

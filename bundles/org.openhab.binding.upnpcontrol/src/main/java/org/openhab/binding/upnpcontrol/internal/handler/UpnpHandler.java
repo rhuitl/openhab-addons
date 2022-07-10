@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2021 Contributors to the openHAB project
+ * Copyright (c) 2010-2022 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -191,6 +191,8 @@ public abstract class UpnpHandler extends BaseThingHandler implements UpnpIOPart
     protected void initDevice() {
         String udn = getUDN();
         if ((udn != null) && !udn.isEmpty()) {
+            updateStatus(ThingStatus.UNKNOWN);
+
             if (config.refresh == 0) {
                 upnpScheduler.submit(this::initJob);
             } else {

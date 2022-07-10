@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2021 Contributors to the openHAB project
+ * Copyright (c) 2010-2022 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -367,8 +367,12 @@ public class CloudService implements ActionService, CloudClientListener, EventSu
     @Override
     public void receive(Event event) {
         ItemStateEvent ise = (ItemStateEvent) event;
-        if (exposedItems != null && exposedItems.contains(ise.getItemName())) {
+        if (supportsUpdates() && exposedItems != null && exposedItems.contains(ise.getItemName())) {
             cloudClient.sendItemUpdate(ise.getItemName(), ise.getItemState().toString());
         }
+    }
+
+    private boolean supportsUpdates() {
+        return cloudBaseUrl.indexOf(CFG_BASE_URL) >= 0;
     }
 }

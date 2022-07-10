@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2021 Contributors to the openHAB project
+ * Copyright (c) 2010-2022 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -101,6 +101,9 @@ public class ShellyHandlerFactory extends BaseThingHandlerFactory {
         logger.debug("Using OH HTTP port {}", httpPort);
 
         this.coapServer = new ShellyCoapServer();
+
+        // Promote Shelly Manager usage
+        logger.info("{}", messages.get("status.managerstarted", localIP, httpPort));
     }
 
     @Override

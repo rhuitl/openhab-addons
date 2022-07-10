@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2021 Contributors to the openHAB project
+ * Copyright (c) 2010-2022 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -223,9 +223,17 @@ public class ShellyCoapJSonDTO {
                 }
 
                 in.endArray();
+                if (in.hasNext()) {
+                    name = in.nextName();
+                }
             }
-            in.endObject();
 
+            if (name.equalsIgnoreCase(COIOT_TAG_ACT)) {
+                // skip record
+                in.skipValue();
+            }
+
+            in.endObject();
             return descr;
         }
 

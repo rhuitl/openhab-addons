@@ -1,8 +1,7 @@
 # RadioThermostat Binding
 
-![RadioThermostat logo](doc/index.jpg)
-
-This binding connects RadioThermostat/3M Filtrete models CT30, CT50/3M50, CT80, etc. with built-in Wi-Fi module to openHAB.
+This binding connects RadioThermostat/3M Filtrete models CT30, CT50/3M50, CT80, etc. with built-in Wi-Fi module to openHAB. 
+Thermostats using a Z-Wave module are not supported but can be used via the openHAB ZWave binding.
 
 The binding retrieves and periodically updates all basic system information from the thermostat.
 The main thermostat functions such as thermostat mode, fan mode, temperature set point and hold mode can be controlled.
@@ -74,7 +73,7 @@ The thermostat information that is retrieved is available as these channels:
 
 radiotherm.map:
 
-```text
+```
 UNDEF_stus=-
 NULL_stus=-
 -_stus=-
@@ -117,14 +116,14 @@ NULL_over=-
 
 radiotherm.things:
 
-```java
+```
 radiothermostat:rtherm:mytherm1 "My 1st floor thermostat" [ hostName="192.168.10.1", refresh=2, logRefresh=10, isCT80=false, disableLogs=false, setpointMode="temporary" ]
 radiothermostat:rtherm:mytherm2 "My 2nd floor thermostat" [ hostName="mythermhost2", refresh=1, logRefresh=20, isCT80=true, disableLogs=false, setpointMode="absolute" ]
 ```
 
 radiotherm.items:
 
-```java
+```
 Number:Temperature  Therm_Temp  "Current Temperature [%.1f °F] " <temperature>  { channel="radiothermostat:rtherm:mytherm1:temperature" }
 // Humidity only supported on CT80
 Number Therm_Hum                "Current Humidity [%d %%]" <temperature>        { channel="radiothermostat:rtherm:mytherm1:humidity" }
@@ -158,7 +157,7 @@ Switch Therm_mysetting   "Send my preferred setting"
 
 radiotherm.sitemap:
 
-```perl
+```
 sitemap radiotherm label="My Thermostat" {
     Frame label="My 1st floor thermostat" {
         Text item=Therm_Temp icon="temperature" valuecolor=[>76="orange",>67.5="green",<=67.5="blue"]
@@ -196,7 +195,7 @@ sitemap radiotherm label="My Thermostat" {
 
 radiotherm.rules:
 
-```java
+```
 rule "Send my thermostat command"
 when
   Item Therm_mysetting received command

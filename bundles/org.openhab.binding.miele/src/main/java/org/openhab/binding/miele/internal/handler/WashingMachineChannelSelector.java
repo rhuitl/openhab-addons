@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2021 Contributors to the openHAB project
+ * Copyright (c) 2010-2022 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -19,11 +19,13 @@ import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TimeZone;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.miele.internal.DeviceUtil;
-import org.openhab.binding.miele.internal.handler.MieleBridgeHandler.DeviceMetaData;
+import org.openhab.binding.miele.internal.MieleTranslationProvider;
+import org.openhab.binding.miele.internal.api.dto.DeviceMetaData;
 import org.openhab.core.library.types.DateTimeType;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.OnOffType;
@@ -36,8 +38,6 @@ import org.openhab.core.types.UnDefType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.JsonElement;
-
 /**
  * The {@link ApplianceChannelSelector} for washing machines
  *
@@ -45,38 +45,38 @@ import com.google.gson.JsonElement;
  * @author Kai Kreuzer - Changed START_TIME to DateTimeType
  * @author Jacob Laursen - Added power/water consumption channels, UoM for temperatures, raw channels
  */
+@NonNullByDefault
 public enum WashingMachineChannelSelector implements ApplianceChannelSelector {
 
     PRODUCT_TYPE("productTypeId", "productType", StringType.class, true, false),
     DEVICE_TYPE("mieleDeviceType", "deviceType", StringType.class, true, false),
-    STATE_TEXT(STATE_PROPERTY_NAME, STATE_TEXT_CHANNEL_ID, StringType.class, false, false),
-    STATE(null, STATE_CHANNEL_ID, DecimalType.class, false, false),
-    PROGRAM_TEXT(PROGRAM_ID_PROPERTY_NAME, PROGRAM_TEXT_CHANNEL_ID, StringType.class, false, false) {
+    STATE_TEXT(STATE_PROPERTY_NAME, STATE_TEXT_CHANNEL_ID, StringType.class, false, false) {
         @Override
-        public State getState(String s, DeviceMetaData dmd) {
-            State state = getTextState(s, dmd, programs, MISSING_PROGRAM_TEXT_PREFIX);
-            if (state != null) {
-                return state;
-            }
-            return super.getState(s, dmd);
+        public State getState(String s, @Nullable DeviceMetaData dmd, MieleTranslationProvider translationProvider) {
+            return DeviceUtil.getStateTextState(s, dmd, translationProvider);
         }
     },
-    PROGRAM(null, PROGRAM_CHANNEL_ID, DecimalType.class, false, false),
+    STATE("", STATE_CHANNEL_ID, DecimalType.class, false, false),
+    PROGRAM_TEXT(PROGRAM_ID_PROPERTY_NAME, PROGRAM_TEXT_CHANNEL_ID, StringType.class, false, false) {
+        @Override
+        public State getState(String s, @Nullable DeviceMetaData dmd, MieleTranslationProvider translationProvider) {
+            return DeviceUtil.getTextState(s, dmd, translationProvider, PROGRAMS, MISSING_PROGRAM_TEXT_PREFIX,
+                    MIELE_WASHING_MACHINE_TEXT_PREFIX);
+        }
+    },
+    PROGRAM("", PROGRAM_CHANNEL_ID, DecimalType.class, false, false),
     PROGRAMTYPE("programType", "type", StringType.class, false, false),
     PROGRAM_PHASE_TEXT(PHASE_PROPERTY_NAME, PHASE_TEXT_CHANNEL_ID, StringType.class, false, false) {
         @Override
-        public State getState(String s, DeviceMetaData dmd) {
-            State state = getTextState(s, dmd, phases, MISSING_PHASE_TEXT_PREFIX);
-            if (state != null) {
-                return state;
-            }
-            return super.getState(s, dmd);
+        public State getState(String s, @Nullable DeviceMetaData dmd, MieleTranslationProvider translationProvider) {
+            return DeviceUtil.getTextState(s, dmd, translationProvider, PHASES, MISSING_PHASE_TEXT_PREFIX,
+                    MIELE_WASHING_MACHINE_TEXT_PREFIX);
         }
     },
     PROGRAM_PHASE(RAW_PHASE_PROPERTY_NAME, PHASE_CHANNEL_ID, DecimalType.class, false, false),
     START_TIME("startTime", "start", DateTimeType.class, false, false) {
         @Override
-        public State getState(String s, DeviceMetaData dmd) {
+        public State getState(String s, @Nullable DeviceMetaData dmd, MieleTranslationProvider translationProvider) {
             Date date = new Date();
             SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+0"));
@@ -90,7 +90,7 @@ public enum WashingMachineChannelSelector implements ApplianceChannelSelector {
     },
     DURATION("duration", "duration", DateTimeType.class, false, false) {
         @Override
-        public State getState(String s, DeviceMetaData dmd) {
+        public State getState(String s, @Nullable DeviceMetaData dmd, MieleTranslationProvider translationProvider) {
             Date date = new Date();
             SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+0"));
@@ -104,7 +104,7 @@ public enum WashingMachineChannelSelector implements ApplianceChannelSelector {
     },
     ELAPSED_TIME("elapsedTime", "elapsed", DateTimeType.class, false, false) {
         @Override
-        public State getState(String s, DeviceMetaData dmd) {
+        public State getState(String s, @Nullable DeviceMetaData dmd, MieleTranslationProvider translationProvider) {
             Date date = new Date();
             SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+0"));
@@ -118,7 +118,7 @@ public enum WashingMachineChannelSelector implements ApplianceChannelSelector {
     },
     FINISH_TIME("finishTime", "finish", DateTimeType.class, false, false) {
         @Override
-        public State getState(String s, DeviceMetaData dmd) {
+        public State getState(String s, @Nullable DeviceMetaData dmd, MieleTranslationProvider translationProvider) {
             Date date = new Date();
             SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+0"));
@@ -132,13 +132,13 @@ public enum WashingMachineChannelSelector implements ApplianceChannelSelector {
     },
     TARGET_TEMP("targetTemperature", "target", QuantityType.class, false, false) {
         @Override
-        public State getState(String s, DeviceMetaData dmd) {
+        public State getState(String s, @Nullable DeviceMetaData dmd, MieleTranslationProvider translationProvider) {
             return getTemperatureState(s);
         }
     },
     SPINNING_SPEED("spinningSpeed", "spinningspeed", StringType.class, false, false) {
         @Override
-        public State getState(String s, DeviceMetaData dmd) {
+        public State getState(String s, @Nullable DeviceMetaData dmd, MieleTranslationProvider translationProvider) {
             if ("0".equals(s)) {
                 return getState("Without spinning");
             }
@@ -150,8 +150,7 @@ public enum WashingMachineChannelSelector implements ApplianceChannelSelector {
     },
     DOOR("signalDoor", "door", OpenClosedType.class, false, false) {
         @Override
-
-        public State getState(String s, DeviceMetaData dmd) {
+        public State getState(String s, @Nullable DeviceMetaData dmd, MieleTranslationProvider translationProvider) {
             if ("true".equals(s)) {
                 return getState("OPEN");
             }
@@ -163,7 +162,7 @@ public enum WashingMachineChannelSelector implements ApplianceChannelSelector {
             return UnDefType.UNDEF;
         }
     },
-    SWITCH(null, "switch", OnOffType.class, false, false),
+    SWITCH("", "switch", OnOffType.class, false, false),
     POWER_CONSUMPTION(EXTENDED_DEVICE_STATE_PROPERTY_NAME, POWER_CONSUMPTION_CHANNEL_ID, QuantityType.class, false,
             true),
     WATER_CONSUMPTION(EXTENDED_DEVICE_STATE_PROPERTY_NAME, WATER_CONSUMPTION_CHANNEL_ID, QuantityType.class, false,
@@ -171,18 +170,18 @@ public enum WashingMachineChannelSelector implements ApplianceChannelSelector {
 
     private final Logger logger = LoggerFactory.getLogger(WashingMachineChannelSelector.class);
 
-    private static final Map<String, String> programs = Map.ofEntries(entry("1", "Cottons"), entry("3", "Minimum iron"),
-            entry("4", "Delicates"), entry("8", "Woollens"), entry("9", "Silks"), entry("17", "Starch"),
-            entry("18", "Rinse"), entry("21", "Drain/Spin"), entry("22", "Curtains"), entry("23", "Shirts"),
-            entry("24", "Denim"), entry("27", "Proofing"), entry("29", "Sportswear"), entry("31", "Automatic Plus"),
-            entry("37", "Outerwear"), entry("39", "Pillows"), entry("50", "Dark Garments"), entry("53", "First wash"),
-            entry("75", "Steam care"), entry("76", "Freshen up"), entry("91", "Maintenance wash"),
-            entry("95", "Down duvets"), entry("122", "Express 20"), entry("129", "Down filled items"),
-            entry("133", "Cottons Eco"), entry("146", "QuickPowerWash"), entry("65532", "Mix"));
+    private static final Map<String, String> PROGRAMS = Map.ofEntries(entry("1", "cottons"), entry("3", "minimum-iron"),
+            entry("4", "delicates"), entry("8", "woollens"), entry("9", "silks"), entry("17", "starch"),
+            entry("18", "rinse"), entry("21", "drain-spin"), entry("22", "curtains"), entry("23", "shirts"),
+            entry("24", "denim"), entry("27", "proofing"), entry("29", "sportswear"), entry("31", "automatic-plus"),
+            entry("37", "outerwear"), entry("39", "pillows"), entry("50", "dark-garments"), entry("53", "first-wash"),
+            entry("75", "steam-care"), entry("76", "freshen-up"), entry("91", "maintenance-wash"),
+            entry("95", "down-duvets"), entry("122", "express-20"), entry("129", "down-filled-items"),
+            entry("133", "cottons-eco"), entry("146", "quickpowerwash"), entry("65532", "mix"));
 
-    private static final Map<String, String> phases = Map.ofEntries(entry("1", "Pre-wash"), entry("4", "Washing"),
-            entry("5", "Rinses"), entry("7", "Clean"), entry("9", "Drain"), entry("10", "Spin"),
-            entry("11", "Anti-crease"), entry("12", "Finished"));
+    private static final Map<String, String> PHASES = Map.ofEntries(entry("1", "pre-wash"), entry("4", "washing"),
+            entry("5", "rinses"), entry("7", "clean"), entry("9", "drain"), entry("10", "spin"),
+            entry("11", "anti-crease"), entry("12", "finished"));
 
     private final String mieleID;
     private final String channelID;
@@ -225,9 +224,14 @@ public enum WashingMachineChannelSelector implements ApplianceChannelSelector {
     }
 
     @Override
-    public State getState(String s, DeviceMetaData dmd) {
+    public State getState(String s, @Nullable DeviceMetaData dmd, MieleTranslationProvider translationProvider) {
+        return this.getState(s, dmd);
+    }
+
+    @Override
+    public State getState(String s, @Nullable DeviceMetaData dmd) {
         if (dmd != null) {
-            String localizedValue = getMieleEnum(s, dmd);
+            String localizedValue = dmd.getMieleEnum(s);
             if (localizedValue == null) {
                 localizedValue = dmd.LocalizedValue;
             }
@@ -249,10 +253,10 @@ public enum WashingMachineChannelSelector implements ApplianceChannelSelector {
                 return state;
             }
         } catch (Exception e) {
-            logger.error("An exception occurred while converting '{}' into a State", s);
+            logger.warn("An exception occurred while converting '{}' into a State", s);
         }
 
-        return null;
+        return UnDefType.UNDEF;
     }
 
     public State getTemperatureState(String s) {
@@ -262,35 +266,5 @@ public enum WashingMachineChannelSelector implements ApplianceChannelSelector {
             logger.warn("An exception occurred while converting '{}' into a State", s);
             return UnDefType.UNDEF;
         }
-    }
-
-    public State getTextState(String s, DeviceMetaData dmd, Map<String, String> valueMap, String prefix) {
-        if ("0".equals(s)) {
-            return UnDefType.UNDEF;
-        }
-
-        if (dmd == null || dmd.LocalizedValue == null || dmd.LocalizedValue.startsWith(prefix)) {
-            String text = valueMap.get(s);
-            if (text != null) {
-                return getState(text);
-            }
-            if (dmd == null || dmd.LocalizedValue == null) {
-                return getState(prefix + s);
-            }
-        }
-
-        return null;
-    }
-
-    public String getMieleEnum(String s, DeviceMetaData dmd) {
-        if (dmd.MieleEnum != null) {
-            for (Entry<String, JsonElement> enumEntry : dmd.MieleEnum.entrySet()) {
-                if (enumEntry.getValue().getAsString().trim().equals(s.trim())) {
-                    return enumEntry.getKey();
-                }
-            }
-        }
-
-        return null;
     }
 }

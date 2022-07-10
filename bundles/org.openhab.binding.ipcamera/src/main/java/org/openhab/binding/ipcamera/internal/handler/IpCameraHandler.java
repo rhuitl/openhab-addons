@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2021 Contributors to the openHAB project
+ * Copyright (c) 2010-2022 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -213,7 +213,7 @@ public class IpCameraHandler extends BaseThingHandler {
             try {
                 if (msg instanceof HttpResponse) {
                     HttpResponse response = (HttpResponse) msg;
-                    if (response.status().code() != 401) {
+                    if (response.status().code() == 200) {
                         if (!response.headers().isEmpty()) {
                             for (String name : response.headers().names()) {
                                 // Some cameras use first letter uppercase and others dont.
@@ -232,17 +232,17 @@ public class IpCameraHandler extends BaseThingHandler {
                                 }
                             }
                             if (contentType.contains("multipart")) {
+                                boundary = Helper.searchString(contentType, "boundary=");
                                 if (mjpegUri.equals(requestUrl)) {
                                     if (msg instanceof HttpMessage) {
                                         // very start of stream only
                                         mjpegContentType = contentType;
                                         CameraServlet localServlet = servlet;
                                         if (localServlet != null) {
-                                            localServlet.openStreams.updateContentType(contentType);
+                                            logger.debug("Setting Content-Type to:{}", contentType);
+                                            localServlet.openStreams.updateContentType(contentType, boundary);
                                         }
                                     }
-                                } else {
-                                    boundary = Helper.searchString(contentType, "boundary=");
                                 }
                             } else if (contentType.contains("image/jp")) {
                                 if (bytesToRecieve == 0) {
@@ -253,7 +253,7 @@ public class IpCameraHandler extends BaseThingHandler {
                             }
                         }
                     } else {
-                        // 401 errors already handled in pipeline by MyNettyAuthHandler.java
+                        // Non 200 OK replies are logged and handled in pipeline by MyNettyAuthHandler.java
                         return;
                     }
                 }
@@ -570,7 +570,7 @@ public class IpCameraHandler extends BaseThingHandler {
         if (!"PUT".equals(httpMethod) || (useDigestAuth && digestString == null)) {
             request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, new HttpMethod(httpMethod), httpRequestURL);
             request.headers().set("Host", cameraConfig.getIp() + ":" + port);
-            request.headers().set("Connection", HttpHeaderValues.KEEP_ALIVE);
+            request.headers().set("Connection", HttpHeaderValues.CLOSE);
         } else {
             request = putRequestWithBody;
         }
@@ -669,8 +669,13 @@ public class IpCameraHandler extends BaseThingHandler {
     }
 
     public void openCamerasStream() {
+        if (mjpegUri.isEmpty() || "ffmpeg".equals(mjpegUri)) {
+            setupFfmpegFormat(FFmpegFormat.MJPEG);
+            return;
+        }
         closeChannel(getTinyUrl(mjpegUri));
-        mainEventLoopGroup.schedule(this::openMjpegStream, 0, TimeUnit.MILLISECONDS);
+        // Dahua cameras crash if you refresh (close and open) the stream without this delay.
+        mainEventLoopGroup.schedule(this::openMjpegStream, 300, TimeUnit.MILLISECONDS);
     }
 
     private void openMjpegStream() {
@@ -1311,6 +1316,12 @@ public class IpCameraHandler extends BaseThingHandler {
 
         pollCameraJob = threadPool.scheduleWithFixedDelay(this::pollCameraRunnable, 1000, 8000, TimeUnit.MILLISECONDS);
 
+        // auto restart mjpeg stream now camera is back online.
+        CameraServlet localServlet = servlet;
+        if (localServlet != null && !localServlet.openStreams.isEmpty()) {
+            openCamerasStream();
+        }
+
         if (!rtspUri.isEmpty()) {
             updateState(CHANNEL_RTSP_URL, new StringType(rtspUri));
         }
@@ -1342,7 +1353,9 @@ public class IpCameraHandler extends BaseThingHandler {
     }
 
     void pollingCameraConnection() {
-        if (thing.getThingTypeUID().getId().equals(GENERIC_THING)) {
+        keepMjpegRunning();
+        if (thing.getThingTypeUID().getId().equals(GENERIC_THING)
+                || thing.getThingTypeUID().getId().equals(DOORBIRD_THING)) {
             if (rtspUri.isEmpty()) {
                 logger.warn("Binding has not been supplied with a FFmpeg Input URL, so some features will not work.");
             }
@@ -1366,7 +1379,7 @@ public class IpCameraHandler extends BaseThingHandler {
             snapshotIsFfmpeg();
         } else {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
-                    "Camera failed to report a valid Snaphot and/or RTSP URL. See readme on how to use the SNAPSHOT_URL_OVERRIDE feature.");
+                    "Camera failed to report a valid Snaphot and/or RTSP URL. Check user/pass is correct, or use the advanced configs to manually provide a URL.");
         }
     }
 
@@ -1636,14 +1649,25 @@ public class IpCameraHandler extends BaseThingHandler {
     }
 
     private void tryConnecting() {
-        if (!thing.getThingTypeUID().getId().equals(GENERIC_THING)) {
+        if (!thing.getThingTypeUID().getId().equals(GENERIC_THING)
+                && !thing.getThingTypeUID().getId().equals(DOORBIRD_THING)) {
             onvifCamera = new OnvifConnection(this, cameraConfig.getIp() + ":" + cameraConfig.getOnvifPort(),
                     cameraConfig.getUser(), cameraConfig.getPassword());
             onvifCamera.setSelectedMediaProfile(cameraConfig.getOnvifMediaProfile());
             // Only use ONVIF events if it is not an API camera.
             onvifCamera.connect(thing.getThingTypeUID().getId().equals(ONVIF_THING));
         }
-        cameraConnectionJob = threadPool.scheduleWithFixedDelay(this::pollingCameraConnection, 4, 30, TimeUnit.SECONDS);
+        cameraConnectionJob = threadPool.scheduleWithFixedDelay(this::pollingCameraConnection, 4, 8, TimeUnit.SECONDS);
+    }
+
+    private void keepMjpegRunning() {
+        CameraServlet localServlet = servlet;
+        if (localServlet != null && !localServlet.openStreams.isEmpty()) {
+            if (!mjpegUri.isEmpty() && !"ffmpeg".equals(mjpegUri)) {
+                localServlet.openStreams.queueFrame(("--" + localServlet.openStreams.boundary + "\r\n\r\n").getBytes());
+            }
+            localServlet.openStreams.queueFrame(getSnapshot());
+        }
     }
 
     // What the camera needs to re-connect if the initialize() is not called.

@@ -108,7 +108,7 @@
 
 	<channel-group-type id="zone3">
 		<label>@text/channel-group.zone3.label</label>
-		<description>T@text/channel-group.zone3.description</description>
+		<description>@text/channel-group.zone3.description</description>
 		<channels>
 			<channel id="power" typeId="system.power"/>
 			<channel id="source" typeId="source"/>
@@ -201,4 +201,27 @@
 		<description>The backlight brightness level (in %) of the device front panel</description>
 	</channel-type>
 
+	<channel-type id="tcbypass" advanced="true">
+		<item-type>Switch</item-type>
+		<label>Tone Control Bypass</label>
+		<description>The user's bass-/treble-settings are bypassed</description>
+	</channel-type>
+
+	<channel-type id="balance" advanced="true">
+		<item-type>Number</item-type>
+		<label>Balance Adjustment</label>
+		<description>Adjust the speakers left-right balance</description>
+	</channel-type>
+
+	<channel-type id="speakera" advanced="true">
+		<item-type>Switch</item-type>
+		<label>Speaker-A Adjustment</label>
+		<description>Turn on/off the speaker group A</description>
+	</channel-type>
+
+	<channel-type id="speakerb" advanced="true">
+		<item-type>Switch</item-type>
+		<label>Speaker-B Adjustment</label>
+		<description>Turn on/off the speaker group B</description>
+	</channel-type>
 </thing:thing-descriptions>

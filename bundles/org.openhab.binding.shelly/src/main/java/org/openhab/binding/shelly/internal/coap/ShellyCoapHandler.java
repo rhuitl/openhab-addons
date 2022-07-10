@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2021 Contributors to the openHAB project
+ * Copyright (c) 2010-2022 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -525,7 +525,7 @@ public class ShellyCoapHandler implements ShellyCoapListener {
             // Old firmware release are lacking various status values, which are not updated using CoIoT.
             // In this case we keep a refresh so it gets polled using REST. Beginning with Firmware 1.6 most
             // of the values are available
-            if ((!thingHandler.autoCoIoT && (thingHandler.scheduledUpdates <= 1))
+            if ((!thingHandler.autoCoIoT && (thingHandler.scheduledUpdates < 1))
                     || (thingHandler.autoCoIoT && !profile.isLight && !profile.hasBattery)) {
                 thingHandler.requestUpdates(1, false);
             }
