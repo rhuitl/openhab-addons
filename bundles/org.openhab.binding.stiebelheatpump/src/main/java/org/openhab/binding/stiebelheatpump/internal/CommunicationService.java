@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2020 Contributors to the openHAB project
+ * Copyright (c) 2010-2022 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -33,20 +33,23 @@ import org.openhab.core.io.transport.serial.SerialPortManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Stefan Triller
+ */
 public class CommunicationService {
 
-    private Logger logger = LoggerFactory.getLogger(CommunicationService.class);
+    private final Logger logger = LoggerFactory.getLogger(CommunicationService.class);
 
-    private ProtocolConnector connector;
-    private int maxRetry = 5;
-    private static int inputBufferLength = 1024;
+    private final ProtocolConnector connector;
+    private final int maxRetry = 5;
+    private static final int inputBufferLength = 1024;
     private byte[] buffer = new byte[inputBufferLength];
 
     DataParser parser = new DataParser();
 
-    private SerialPortManager serialPortManager;
-    private String serialPortName;
-    private int baudRate;
+    private final SerialPortManager serialPortManager;
+    private final String serialPortName;
+    private final int baudRate;
     private int waitingTime = 1200;
 
     public CommunicationService(SerialPortManager serialPortManager, String serialPortName, int baudRate,
@@ -217,7 +220,7 @@ public class CommunicationService {
                 }
                 success = true;
             } catch (StiebelHeatPumpException e) {
-                logger.warn("Error reading data  for {}: {} -> Retry: {}", requestStr, e.toString(), count);
+                logger.warn("Error reading data for {}: {} -> Retry: {}", requestStr, e, count);
             }
         }
         if (!success) {
@@ -252,7 +255,7 @@ public class CommunicationService {
                 }
                 success = true;
             } catch (StiebelHeatPumpException e) {
-                logger.warn("Error reading data  for {}: {} -> Retry: {}", requestStr, e.toString(), count);
+                logger.warn("Error reading data for {}: {} -> Retry: {}", requestStr, e, count);
             }
         }
         if (!success) {
@@ -386,9 +389,9 @@ public class CommunicationService {
             }
 
         } catch (StiebelHeatPumpException e) {
-            logger.error("Stiebel heat pump communication error during update of value !");
+            logger.error("Stiebel heat pump communication error during update of value!");
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.error("Interrupted", e);
         }
         return data;
     }
@@ -518,7 +521,7 @@ public class CommunicationService {
             connector.write(DataParser.STARTCOMMUNICATION);
             response = connector.get();
         } catch (Exception e) {
-            throw new StiebelHeatPumpException("heat pump communication could not be established !" + e.getMessage());
+            throw new StiebelHeatPumpException("heat pump communication could not be established!" + e.getMessage());
         }
         if (response != DataParser.ESCAPE) {
             throw new StiebelHeatPumpException(
@@ -632,7 +635,7 @@ public class CommunicationService {
             requestMessage = parser.addDuplicatedBytes(requestMessage);
         } catch (StiebelHeatPumpException e) {
             String requestStr = String.format("%02X", requestytes);
-            logger.error("Could not create request [{}] message !", requestStr, e.toString());
+            logger.error("Could not create request [{}] message: {}", requestStr, e.toString());
         }
         return requestMessage;
     }
