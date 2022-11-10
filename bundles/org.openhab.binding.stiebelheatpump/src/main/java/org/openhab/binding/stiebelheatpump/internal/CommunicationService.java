@@ -132,7 +132,9 @@ public class CommunicationService {
             LocalDateTime dt = LocalDateTime.now();
             String formattedString = dt.format(DateTimeFormatter.ofPattern(DATE_PATTERN));
             logger.debug("Current time is : {}", dt);
-            short weekday = (short) dt.getDayOfWeek().getValue();
+            // Weekday: Heatpump: 0 (Mo) - 6 (Sun)
+            // LocalDateTime: 1 (Mo) - 7 (Sun)
+            short weekday = (short) (dt.getDayOfWeek().getValue() - 1);
             short day = (short) dt.getDayOfMonth();
             short month = (short) dt.getMonthValue();
             short year = Short.parseShort(Year.now().format(DateTimeFormatter.ofPattern("uu")));
@@ -210,7 +212,6 @@ public class CommunicationService {
             try {
                 startCommunication();
                 responseAvailable = getData(requestMessage);
-                responseAvailable = parser.fixDuplicatedBytes(responseAvailable);
                 if (parser.headerCheck(responseAvailable)) {
                     return parser.parseRecords(responseAvailable, request);
                 }
@@ -245,7 +246,6 @@ public class CommunicationService {
             try {
                 startCommunication();
                 responseAvailable = getData(requestMessage);
-                responseAvailable = parser.fixDuplicatedBytes(responseAvailable);
                 if (parser.headerCheck(responseAvailable)) {
                     analyzeResponse(responseAvailable);
                     return DataParser.bytesToHex(responseAvailable, true);
@@ -361,7 +361,6 @@ public class CommunicationService {
             // connector object
             byte[] requestMessage = createRequestMessage(updateRecord.getRequestByte());
             byte[] response = getData(requestMessage);
-            response = parser.fixDuplicatedBytes(response);
             String bytes = DataParser.bytesToHex(response, true);
             logger.debug("Parse bytes: {}", bytes);
             Object currentValue = parser.parseRecord(response, updateRecord);
@@ -378,7 +377,6 @@ public class CommunicationService {
             Thread.sleep(waitingTime);
 
             response = setData(requestUpdateMessage);
-            response = parser.fixDuplicatedBytes(response);
             if (parser.setDataCheck(response)) {
                 logger.debug("Updated parameter {} successfully.", channelId);
                 data.put(channelId, newValue);
@@ -612,7 +610,7 @@ public class CommunicationService {
 
         byte[] responseBuffer = new byte[numBytesReadTotal];
         System.arraycopy(buffer, 0, responseBuffer, 0, numBytesReadTotal);
-        return responseBuffer;
+        return parser.fixDuplicatedBytes(responseBuffer);
     }
 
     /**
