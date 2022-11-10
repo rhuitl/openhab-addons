@@ -537,12 +537,12 @@ public class CommunicationService {
      * @return true if data are available from heatpump
      */
     private boolean establishRequest(byte[] request) {
-        int numBytesReadTotal = 0;
         boolean dataAvailable = false;
         int requestRetry = 0;
         int retry = 0;
         try {
             while (requestRetry < maxRetry) {
+                int numBytesReadTotal = 0;
                 connector.write(request);
                 retry = 0;
                 byte singleByte;
