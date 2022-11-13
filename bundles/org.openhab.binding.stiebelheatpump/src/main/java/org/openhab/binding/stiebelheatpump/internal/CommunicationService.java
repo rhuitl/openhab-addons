@@ -150,25 +150,25 @@ public class CommunicationService {
                 Object value = data.get(channelid);
 
                 switch (channelid) {
-                    case "weekday":
+                    case "time#sTimedate_Weekday":
                         response = parser.composeRecord(value, weekday, response, record);
                         break;
-                    case "hours":
+                    case "time#sTimedate_Hour":
                         response = parser.composeRecord(value, hours, response, record);
                         break;
-                    case "minutes":
+                    case "time#sTimedate_Min":
                         response = parser.composeRecord(value, minutes, response, record);
                         break;
-                    case "seconds":
+                    case "time#sTimedate_Sec":
                         response = parser.composeRecord(value, seconds, response, record);
                         break;
-                    case "year":
+                    case "time#sTimedate_Year":
                         response = parser.composeRecord(value, year, response, record);
                         break;
-                    case "month":
+                    case "time#sTimedate_Month":
                         response = parser.composeRecord(value, month, response, record);
                         break;
-                    case "day":
+                    case "time#sTimedate_Day":
                         response = parser.composeRecord(value, day, response, record);
                         break;
                     default:

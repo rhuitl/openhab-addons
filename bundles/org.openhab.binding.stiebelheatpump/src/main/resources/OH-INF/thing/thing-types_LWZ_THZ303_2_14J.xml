@@ -4,10 +4,10 @@
 	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-	<thing-type id="LWZ_THZ303_7_39">
-		<label>Stiebel Eltron LWZ / Tecalor THZ 303 (7.39)</label>
-		<description>LWZ/THZ heat pump with firmware version 7.39. Warning: support for this firmware version has not been
-			verified. It's currently the same as for 5.39.</description>
+	<thing-type id="LWZ_THZ303_2_14j">
+		<label>Stiebel Eltron LWZ / Tecalor THZ 303 (2.14)</label>
+		<description>LWZ/THZ heat pump with firmware version 2.14. Alternative version, see
+			https://forum.fhem.de/index.php/topic,33211.msg1226025.html#msg1226025.</description>
 		<channel-groups>
 			<!-- at least 1 channel-group with id = version must be included -->
 			<channel-group id="version" typeId="channelGroupTypeVersion"/>
@@ -35,20 +35,21 @@
 			<property name="vendor">Stiebel Eltron</property>
 			<property name="modelId">LWZ303</property>
 			<property name="protocol">Serial</property>
-			<property name="firmwareVersion">7.39</property>
+			<property name="firmwareVersion">2.14</property>
 		</properties>
 		<config-description>
 			<parameter name="port" type="text" required="true">
 				<label>Portname</label>
 				<context>serial-port</context>
 				<description>Serial port to use connecting to the heat pump device e.g. COM1 for Windows and /dev/ttyS0 or
-					/dev/ttyUSB0 for Linux.</description>
-				<default>/dev/ttyUSB0</default>
+					/dev/ttyUSB0 for Linux.
+				</description>
+				<default>/dev/ttyS0</default>
 			</parameter>
 			<parameter name="baudRate" type="integer">
 				<label>Baud rate</label>
 				<description>Baud rate of the serial interface.</description>
-				<default>115200</default>
+				<default>9600</default>
 			</parameter>
 			<parameter name="waitingTime" type="integer">
 				<label>Waiting time between requests</label>

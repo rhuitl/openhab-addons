@@ -230,7 +230,7 @@
 		detail , 8, 4, hex2int, 1 -->
 	<!-- property p75passiveCooling, 0A0575 1clean -->
 	<record channelid="p75passiveCooling" requestByte="0A0575" dataType="Settings" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="4" step="1" unit=""></record><!--
+		bitPosition="0" min="0" max="2" step="1" unit=""></record><!--
 		detail , 8, 4, hex2int, 1 -->
 	<!-- property p76RoomThermCorrection, 0A0109 4temp K -->
 	<record channelid="p76RoomThermCorrection" requestByte="0A0109" dataType="Settings" position="6" length="2"
@@ -276,22 +276,6 @@
 	<record channelid="p89DHWeco" requestByte="0A058D" dataType="Settings" position="6" length="2" scale="1"
 		bitPosition="0" min="0" max="1" step="1" unit=""></record><!--
 		detail , 8, 4, hex2int, 1 -->
-	<!-- property p99CoolingHC1HysterFlowTemp, 0B0583 5temp K -->
-	<record channelid="p99CoolingHC1HysterFlowTemp" requestByte="0B0583" dataType="Settings" position="6" length="2"
-		scale="0.1" bitPosition="0" min="0.5" max="5" step="0.1" unit="K"></record><!--
-		detail , 8, 4, hex2int, 10 -->
-	<!-- property p99CoolingHC1HysterRoomTemp, 0B0584 5temp K -->
-	<record channelid="p99CoolingHC1HysterRoomTemp" requestByte="0B0584" dataType="Settings" position="6" length="2"
-		scale="0.1" bitPosition="0" min="0.5" max="3" step="0.1" unit="K"></record><!--
-		detail , 8, 4, hex2int, 10 -->
-	<!-- property p99CoolingHC1SetTemp, 0B0582 5temp °C -->
-	<record channelid="p99CoolingHC1SetTemp" requestByte="0B0582" dataType="Settings" position="6" length="2"
-		scale="0.1" bitPosition="0" min="12" max="27" step="0.1" unit="°C"></record><!--
-		detail , 8, 4, hex2int, 10 -->
-	<!-- property p99CoolingHC1Switch, 0B0287 1clean -->
-	<record channelid="p99CoolingHC1Switch" requestByte="0B0287" dataType="Settings" position="6" length="2"
-		scale="1" bitPosition="0" min="0" max="1" step="1" unit=""></record><!--
-		detail , 8, 4, hex2int, 1 -->
 	<!-- property p99DHWmaxFlowTemp, 0A058C 5temp °C -->
 	<record channelid="p99DHWmaxFlowTemp" requestByte="0A058C" dataType="Settings" position="6" length="2"
 		scale="0.1" bitPosition="0" min="10" max="75" step="0.1" unit="°C"></record><!--
@@ -311,14 +295,6 @@
 	<!-- property p99HC1maxFlowTemp, 0A0027 5temp °C -->
 	<record channelid="p99HC1maxFlowTemp" requestByte="0A0027" dataType="Settings" position="6" length="2"
 		scale="0.1" bitPosition="0" min="10" max="75" step="0.1" unit="°C"></record><!--
-		detail , 8, 4, hex2int, 10 -->
-	<!-- property p99PumpRateDHW, 0A02CC 5temp % -->
-	<record channelid="p99PumpRateDHW" requestByte="0A02CC" dataType="Settings" position="6" length="2" scale="0.1"
-		bitPosition="0" min="0" max="100" step="0.1" unit="%"></record><!--
-		detail , 8, 4, hex2int, 10 -->
-	<!-- property p99PumpRateHC, 0A02CB 5temp % -->
-	<record channelid="p99PumpRateHC" requestByte="0A02CB" dataType="Settings" position="6" length="2" scale="0.1"
-		bitPosition="0" min="0" max="100" step="0.1" unit="%"></record><!--
 		detail , 8, 4, hex2int, 10 -->
 	<!-- property p99startUnschedVent, 0A05DD 1clean -->
 	<record channelid="p99startUnschedVent" requestByte="0A05DD" dataType="Settings" position="6" length="2"
@@ -1239,18 +1215,6 @@
 	<record channelid="sBoostHCTotal" requestByte="0A0928" dataType="Sensor" position="6" length="2" scale="1"
 		bitPosition="0" min="0" max="0" step="1" unit="kWh"></record><!--
 		detail , 8, 4, hex2int, 1 -->
-	<!-- property sComprRelPower, 0A069B 1clean % -->
-	<record channelid="sComprRelPower" requestByte="0A069B" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="%"></record><!--
-		detail , 8, 4, hex2int, 1 -->
-	<!-- property sComprRotLimit, 0A069D 1clean Hz -->
-	<record channelid="sComprRotLimit" requestByte="0A069D" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="Hz"></record><!--
-		detail , 8, 4, hex2int, 1 -->
-	<!-- property sComprRotUnlimit, 0A069C 1clean Hz -->
-	<record channelid="sComprRotUnlimit" requestByte="0A069C" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="Hz"></record><!--
-		detail , 8, 4, hex2int, 1 -->
 	<!-- property sControl, F2 F2ctrl -->
 	<record channelid="sControl_heatRequest" requestByte="F2" dataType="Sensor" position="4" length="1" scale="1"
 		bitPosition="0" min="0" max="0" step="1" unit=""></record><!--
@@ -1319,10 +1283,6 @@
 	<record channelid="sControl_boostBlockTimeAfterHD" requestByte="F2" dataType="Sensor" position="19" length="2"
 		scale="1" bitPosition="0" min="0" max="0" step="1" unit=""></record><!--
 		detail boostBlockTimeAfterHD, 34, 4, hex2int, 1 -->
-	<!-- property sCoolHCTotal, 0A0648 1clean kWh -->
-	<record channelid="sCoolHCTotal" requestByte="0A0648" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="kWh"></record><!--
-		detail , 8, 4, hex2int, 1 -->
 	<!-- property sDHW, F3 F3dhw -->
 	<record channelid="sDHW_dhwTemp" requestByte="F3" dataType="Sensor" position="4" length="2" scale="0.1"
 		bitPosition="0" min="0" max="0" step="0.1" unit="°C"></record><!--
@@ -1354,10 +1314,6 @@
 	<record channelid="sDHW_x36" requestByte="F3" dataType="Sensor" position="20" length="2" scale="1"
 		bitPosition="0" min="0" max="0" step="1" unit=""></record><!--
 		detail x36, 36, 4, raw, 1 -->
-	<!-- property sDewPointHC1, 0B0264 5temp °C -->
-	<record channelid="sDewPointHC1" requestByte="0B0264" dataType="Sensor" position="6" length="2" scale="0.1"
-		bitPosition="0" min="0" max="0" step="0.1" unit="°C"></record><!--
-		detail , 8, 4, hex2int, 10 -->
 	<!-- property sDisplay, 0A0176 0A0176Dis -->
 	<record channelid="sDisplay_switchingProg" requestByte="0A0176" dataType="Sensor" position="7" length="1"
 		scale="1" bitPosition="7" min="0" max="0" step="1" unit=""></record><!--
@@ -1445,10 +1401,6 @@
 		bitPosition="0" min="0" max="0" step="1" unit=""></record><!--
 		detail SW, 32, 4, swver, 1 -->
 	<!-- Unknown format: hex2ascii --><!-- detail Date, 36, 22, hex2ascii, 1 -->
-	<!-- property sFlowRate, 0A033B 1clean cl/min -->
-	<record channelid="sFlowRate" requestByte="0A033B" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="cl/min"></record><!--
-		detail , 8, 4, hex2int, 1 -->
 	<!-- property sGlobal, FB FBglob -->
 	<record channelid="sGlobal_outsideTemp" requestByte="FB" dataType="Sensor" position="6" length="2" scale="0.1"
 		bitPosition="0" min="0" max="0" step="0.1" unit="°C"></record><!--
@@ -1688,10 +1640,6 @@
 	<record channelid="sHeatRecoveredTotal" requestByte="0A03B0" dataType="Sensor" position="6" length="2" scale="1"
 		bitPosition="0" min="0" max="0" step="1" unit="kWh"></record><!--
 		detail , 8, 4, hex2int, 1 -->
-	<!-- property sHeatingRelPower, 0A069A 1clean % -->
-	<record channelid="sHeatingRelPower" requestByte="0A069A" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="%"></record><!--
-		detail , 8, 4, hex2int, 1 -->
 	<!-- property sHistory, 09 09his -->
 	<record channelid="sHistory_compressorHeating" requestByte="09" dataType="Sensor" position="4" length="2"
 		scale="1" bitPosition="0" min="0" max="0" step="1" unit=""></record><!--
@@ -1708,18 +1656,6 @@
 	<record channelid="sHistory_boosterHeating" requestByte="09" dataType="Sensor" position="12" length="2"
 		scale="1" bitPosition="0" min="0" max="0" step="1" unit=""></record><!--
 		detail boosterHeating, 20, 4, hex, 1 -->
-	<!-- property sHumMaskingTime, 0A064F 1clean min -->
-	<record channelid="sHumMaskingTime" requestByte="0A064F" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="min"></record><!--
-		detail , 8, 4, hex2int, 1 -->
-	<!-- property sHumProtection, 0A09D1 1clean -->
-	<record channelid="sHumProtection" requestByte="0A09D1" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit=""></record><!--
-		detail , 8, 4, hex2int, 1 -->
-	<!-- property sHumThreshold, 0A0650 1clean % -->
-	<record channelid="sHumThreshold" requestByte="0A0650" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="%"></record><!--
-		detail , 8, 4, hex2int, 1 -->
 	<!-- property sLast10errors, D1 D1last -->
 	<record channelid="sLast10errors_number_of_faults" requestByte="D1" dataType="Sensor" position="4" length="1"
 		scale="1" bitPosition="0" min="0" max="0" step="1" unit=""></record><!--
@@ -1744,22 +1680,6 @@
 		detail fault3CODE, 44, 2, faultmap, 1 -->
 	<!-- Unknown format: turnhex2time --><!-- detail fault3TIME, 48, 4, turnhex2time, 1 -->
 	<!-- Unknown format: turnhexdate --><!-- detail fault3DATE, 52, 4, turnhexdate, 1 -->
-	<!-- property sOutputIncrease, 0A06A5 1clean % -->
-	<record channelid="sOutputIncrease" requestByte="0A06A5" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="%"></record><!--
-		detail , 8, 4, hex2int, 1 -->
-	<!-- property sOutputReduction, 0A06A4 1clean % -->
-	<record channelid="sOutputReduction" requestByte="0A06A4" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="%"></record><!--
-		detail , 8, 4, hex2int, 1 -->
-	<!-- property sSetHumidityMax, 0A09D3 1clean % -->
-	<record channelid="sSetHumidityMax" requestByte="0A09D3" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="%"></record><!--
-		detail , 8, 4, hex2int, 1 -->
-	<!-- property sSetHumidityMin, 0A09D2 1clean % -->
-	<record channelid="sSetHumidityMin" requestByte="0A09D2" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="%"></record><!--
-		detail , 8, 4, hex2int, 1 -->
 	<!-- property sSol, 16 16sol -->
 	<record channelid="sSol_collectorTemp" requestByte="16" dataType="Sensor" position="4" length="2" scale="0.1"
 		bitPosition="0" min="0" max="0" step="0.1" unit="°C"></record><!--
