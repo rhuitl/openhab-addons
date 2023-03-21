@@ -59,7 +59,8 @@ public class CommunicationServiceTests {
         // cs.connect();
 
         RecordDefinition updateRecord = new RecordDefinition("myChannel",
-                new byte[] { (byte) 0x0a, (byte) 0x05, (byte) 0x6c }, 1, 1, 1, Type.Settings, 0, 3, 1, "unitTest");
+                new byte[] { (byte) 0x0a, (byte) 0x05, (byte) 0x6c }, null, 1, 1, 1, Type.Settings, 0, 3, 1,
+                "unitTest");
         // cs.writeData(1, "myChannel", updateRecord);
 
         byte[] request = cs.createRequestMessage(updateRecord.getRequestByte());

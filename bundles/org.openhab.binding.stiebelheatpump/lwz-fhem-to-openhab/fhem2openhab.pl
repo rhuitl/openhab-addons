@@ -933,6 +933,7 @@ sub convertRecords {
 		my $definition = $gets{$property};
 		my %definition = %$definition;
 		my $cmd = $definition{"cmd2"} // "";
+		my $cmd1000 = $definition{"cmd3"};
 		my $type = $definition{"type"} // "";
 		my $argMin = $definition{"argMin"};
 		my $argMax = $definition{"argMax"};
@@ -958,6 +959,7 @@ sub convertRecords {
 			$name =~ s/[ \:]*//g;
 
 			my $requestByte = $cmd;
+			my $requestByte1000 = $cmd1000;
 			my $position = int($offset / 2 + 2); # for cmd 2, maybe more (len($cmd)*2)
 			my $length = $size > 1 ? $size / 2 : 1;
 			my $scale = 1 / $inverseScale;
@@ -1171,6 +1173,7 @@ sub convertRecords {
 
 			# Write record to Thing XML
 			print RECORDS qq(\t<record channelid="$channelId" requestByte="$requestByte" ) .
+				(defined($requestByte1000) ? qq(requestByte1000="$requestByte1000" ) : "") .
 				qq(dataType="$dataType" position="$position" length="$length" scale="$scale" ) .
 				qq(bitPosition="$bitPosition"$minMax step="$step" unit="$unit"></record>);
 			print RECORDS "<!-- detail $name, $offset, $size, $format, $inverseScale -->\n";

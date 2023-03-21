@@ -1208,12 +1208,12 @@
 		scale="1" bitPosition="0" min="0" max="95" step="1" unit=""></record><!--
 		detail - -, 10, 2, quater, 1 -->
 	<!-- property sBoostDHWTotal, 0A0924 1clean kWh -->
-	<record channelid="sBoostDHWTotal" requestByte="0A0924" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="kWh"></record><!--
+	<record channelid="sBoostDHWTotal" requestByte="0A0924" requestByte1000="0A0925" dataType="Sensor" position="6"
+		length="2" scale="1" bitPosition="0" min="0" max="0" step="1" unit="kWh"></record><!--
 		detail , 8, 4, hex2int, 1 -->
 	<!-- property sBoostHCTotal, 0A0928 1clean kWh -->
-	<record channelid="sBoostHCTotal" requestByte="0A0928" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="kWh"></record><!--
+	<record channelid="sBoostHCTotal" requestByte="0A0928" requestByte1000="0A0929" dataType="Sensor" position="6"
+		length="2" scale="1" bitPosition="0" min="0" max="0" step="1" unit="kWh"></record><!--
 		detail , 8, 4, hex2int, 1 -->
 	<!-- property sControl, F2 F2ctrl -->
 	<record channelid="sControl_heatRequest" requestByte="F2" dataType="Sensor" position="4" length="1" scale="1"
@@ -1355,20 +1355,20 @@
 		bitPosition="1" min="0" max="0" step="1" unit=""></record><!--
 		detail service, 10, 1, bit2, 1 -->
 	<!-- property sElectrDHWDay, 0A091A 1clean Wh -->
-	<record channelid="sElectrDHWDay" requestByte="0A091A" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="Wh"></record><!--
+	<record channelid="sElectrDHWDay" requestByte="0A091A" requestByte1000="0A091B" dataType="Sensor" position="6"
+		length="2" scale="1" bitPosition="0" min="0" max="0" step="1" unit="Wh"></record><!--
 		detail , 8, 4, hex2int, 1 -->
 	<!-- property sElectrDHWTotal, 0A091C 1clean kWh -->
-	<record channelid="sElectrDHWTotal" requestByte="0A091C" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="kWh"></record><!--
+	<record channelid="sElectrDHWTotal" requestByte="0A091C" requestByte1000="0A091D" dataType="Sensor" position="6"
+		length="2" scale="1" bitPosition="0" min="0" max="0" step="1" unit="kWh"></record><!--
 		detail , 8, 4, hex2int, 1 -->
 	<!-- property sElectrHCDay, 0A091E 1clean Wh -->
-	<record channelid="sElectrHCDay" requestByte="0A091E" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="Wh"></record><!--
+	<record channelid="sElectrHCDay" requestByte="0A091E" requestByte1000="0A091F" dataType="Sensor" position="6"
+		length="2" scale="1" bitPosition="0" min="0" max="0" step="1" unit="Wh"></record><!--
 		detail , 8, 4, hex2int, 1 -->
 	<!-- property sElectrHCTotal, 0A0920 1clean kWh -->
-	<record channelid="sElectrHCTotal" requestByte="0A0920" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="kWh"></record><!--
+	<record channelid="sElectrHCTotal" requestByte="0A0920" requestByte1000="0A0921" dataType="Sensor" position="6"
+		length="2" scale="1" bitPosition="0" min="0" max="0" step="1" unit="kWh"></record><!--
 		detail , 8, 4, hex2int, 1 -->
 	<!-- property sFan, E8 E8fan -->
 	<record channelid="sFan_inputFanSpeed" requestByte="E8" dataType="Sensor" position="31" length="1" scale="1"
@@ -1617,28 +1617,28 @@
 		bitPosition="0" min="1" max="5" step="1" unit=""></record><!--
 		detail hcOpMode, 36, 2, opmodehc, 1 -->
 	<!-- property sHeatDHWDay, 0A092A 1clean Wh -->
-	<record channelid="sHeatDHWDay" requestByte="0A092A" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="Wh"></record><!--
+	<record channelid="sHeatDHWDay" requestByte="0A092A" requestByte1000="0A092B" dataType="Sensor" position="6"
+		length="2" scale="1" bitPosition="0" min="0" max="0" step="1" unit="Wh"></record><!--
 		detail , 8, 4, hex2int, 1 -->
 	<!-- property sHeatDHWTotal, 0A092C 1clean kWh -->
-	<record channelid="sHeatDHWTotal" requestByte="0A092C" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="kWh"></record><!--
+	<record channelid="sHeatDHWTotal" requestByte="0A092C" requestByte1000="0A092D" dataType="Sensor" position="6"
+		length="2" scale="1" bitPosition="0" min="0" max="0" step="1" unit="kWh"></record><!--
 		detail , 8, 4, hex2int, 1 -->
 	<!-- property sHeatHCDay, 0A092E 1clean Wh -->
-	<record channelid="sHeatHCDay" requestByte="0A092E" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="Wh"></record><!--
+	<record channelid="sHeatHCDay" requestByte="0A092E" requestByte1000="0A092F" dataType="Sensor" position="6"
+		length="2" scale="1" bitPosition="0" min="0" max="0" step="1" unit="Wh"></record><!--
 		detail , 8, 4, hex2int, 1 -->
 	<!-- property sHeatHCTotal, 0A0930 1clean kWh -->
-	<record channelid="sHeatHCTotal" requestByte="0A0930" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="kWh"></record><!--
+	<record channelid="sHeatHCTotal" requestByte="0A0930" requestByte1000="0A0931" dataType="Sensor" position="6"
+		length="2" scale="1" bitPosition="0" min="0" max="0" step="1" unit="kWh"></record><!--
 		detail , 8, 4, hex2int, 1 -->
 	<!-- property sHeatRecoveredDay, 0A03AE 1clean Wh -->
-	<record channelid="sHeatRecoveredDay" requestByte="0A03AE" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="Wh"></record><!--
+	<record channelid="sHeatRecoveredDay" requestByte="0A03AE" requestByte1000="0A03AF" dataType="Sensor"
+		position="6" length="2" scale="1" bitPosition="0" min="0" max="0" step="1" unit="Wh"></record><!--
 		detail , 8, 4, hex2int, 1 -->
 	<!-- property sHeatRecoveredTotal, 0A03B0 1clean kWh -->
-	<record channelid="sHeatRecoveredTotal" requestByte="0A03B0" dataType="Sensor" position="6" length="2" scale="1"
-		bitPosition="0" min="0" max="0" step="1" unit="kWh"></record><!--
+	<record channelid="sHeatRecoveredTotal" requestByte="0A03B0" requestByte1000="0A03B1" dataType="Sensor"
+		position="6" length="2" scale="1" bitPosition="0" min="0" max="0" step="1" unit="kWh"></record><!--
 		detail , 8, 4, hex2int, 1 -->
 	<!-- property sHistory, 09 09his -->
 	<record channelid="sHistory_compressorHeating" requestByte="09" dataType="Sensor" position="4" length="2"

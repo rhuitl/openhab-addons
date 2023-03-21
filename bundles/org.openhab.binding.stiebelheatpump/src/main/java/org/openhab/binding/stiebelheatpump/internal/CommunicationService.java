@@ -129,7 +129,7 @@ public class CommunicationService {
             logger.debug("Loading current time data ...");
             byte[] requestMessage = createRequestMessage(timeRequest.getRequestByte());
             byte[] response = getData(requestMessage);
-            data = parser.parseRecords(response, timeRequest);
+            data = parser.parseRecords(response, null, timeRequest);
 
             // get current time from local machine
             LocalDateTime dt = LocalDateTime.now();
@@ -181,7 +181,7 @@ public class CommunicationService {
             setData(response);
             Thread.sleep(waitingTime);
             response = getData(requestMessage);
-            data = parser.parseRecords(response, timeRequest);
+            data = parser.parseRecords(response, null, timeRequest);
 
             data.put(StiebelHeatPumpBindingConstants.CHANNEL_LASTUPDATE, formattedString);
             for (Map.Entry<String, Object> entry : data.entrySet()) {
@@ -205,22 +205,41 @@ public class CommunicationService {
         Map<String, Object> data = new HashMap<>();
         String requestStr = DataParser.bytesToHex(request.getRequestByte(), false);
         logger.debug("RequestByte -> {}", requestStr);
-        byte[] responseAvailable;
         byte[] requestMessage = createRequestMessage(request.getRequestByte());
+        byte[] requestMessage1000 = null;
+        if (request.getRequestByte1000() != null) {
+            requestMessage1000 = createRequestMessage(request.getRequestByte1000());
+        }
 
         boolean success = false;
         int count = 0;
         int MAX_TRIES = 3;
         while (!success && count++ < MAX_TRIES) {
             try {
+                // Read the thousands first. In case the number increases between the reads and the
+                // less significant digits carry over into the thousands, we'll compute a wrong
+                // value. This order ensures that the combined value is lower than the real value,
+                // not higher, which is IMHO slightly more favorable.
+                byte[] responseAvailable1000 = null;
+                if (requestMessage1000 != null) {
+                    startCommunication();
+                    responseAvailable1000 = getData(requestMessage1000);
+                    Thread.sleep(waitingTime);
+                }
+
+                // Read the value
                 startCommunication();
-                responseAvailable = getData(requestMessage);
-                if (parser.headerCheck(responseAvailable)) {
-                    return parser.parseRecords(responseAvailable, request);
+                byte[] responseAvailable = getData(requestMessage);
+
+                if (parser.headerCheck(responseAvailable)
+                        && (responseAvailable1000 == null || parser.headerCheck(responseAvailable1000))) {
+                    return parser.parseRecords(responseAvailable, responseAvailable1000, request);
                 }
                 success = true;
             } catch (StiebelHeatPumpException e) {
                 logger.warn("Error reading data for {}: {} -> Retry: {}", requestStr, e, count);
+            } catch (InterruptedException e) {
+                throw new StiebelHeatPumpException(e.toString());
             }
         }
         if (!success) {
@@ -292,7 +311,7 @@ public class CommunicationService {
                 // this is what we are interested in
                 rDef.setBitPosition(bitPos);
                 rDef.setLength(1);
-                positionValues.add(dp.parseRecord(response, rDef));
+                positionValues.add(dp.parseRecord(response, null, rDef));
             }
             logger.debug("Bitpos:\tFound on pos={}\tvalues=[{}]", pos, Arrays.toString(positionValues.toArray()));
         }
@@ -305,7 +324,7 @@ public class CommunicationService {
             rDef.setBitPosition(0);
             // this is what we are interested in
             rDef.setLength(1);
-            Object parsedData = dp.parseRecord(response, rDef);
+            Object parsedData = dp.parseRecord(response, null, rDef);
             logger.debug("1-Byte:\tFound on pos={}\tvalue={}", pos, parsedData);
         }
         if (numDataBytes < 2) {
@@ -323,7 +342,7 @@ public class CommunicationService {
             rDef.setBitPosition(0);
             // this is what we are interested in
             rDef.setLength(2);
-            Object parsedData = dp.parseRecord(response, rDef);
+            Object parsedData = dp.parseRecord(response, null, rDef);
             logger.debug("2-Bytes:\tFound on pos={}\tvalue={}", pos, parsedData);
         }
 
@@ -339,7 +358,7 @@ public class CommunicationService {
             rDef.setBitPosition(0);
             // this is what we are interested in
             rDef.setLength(4);
-            Object parsedData = dp.parseRecord(response, rDef);
+            Object parsedData = dp.parseRecord(response, null, rDef);
             logger.debug("4-Bytes:\tFound on pos={}\tvalue={}", pos, parsedData);
         }
     }
@@ -366,7 +385,7 @@ public class CommunicationService {
             byte[] response = getData(requestMessage);
             String bytes = DataParser.bytesToHex(response, true);
             logger.debug("Parse bytes: {}", bytes);
-            Object currentValue = parser.parseRecord(response, updateRecord);
+            Object currentValue = parser.parseRecord(response, null, updateRecord);
 
             if (Arrays.equals(requestMessage, response)) {
                 logger.debug("Current value for {} is already {}.", channelId, newValue);
