@@ -185,7 +185,7 @@ public class DataParser {
      *            pump set command
      * @param string
      *            value to be compose
-     * @return byte[] ready to send to heat pump
+     * @return byte[] ready to send to heat pump (almost - it still needs escaping)
      * @throws StiebelHeatPumpException
      */
     public byte[] composeRecord(Object currentValue, Object newValue, byte[] response,
@@ -247,7 +247,6 @@ public class DataParser {
             }
         }
         response[2] = this.calculateChecksum(response);
-        this.addDuplicatedBytes(response);
         logger.debug("Updated record {} at position {} with length {} to value {}.", recordDefinition.getChannelid(),
                 recordDefinition.getPosition(), recordDefinition.getLength(), newValue);
         return response;

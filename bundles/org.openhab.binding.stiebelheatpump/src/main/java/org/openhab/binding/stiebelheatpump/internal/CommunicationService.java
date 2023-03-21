@@ -175,6 +175,7 @@ public class CommunicationService {
                         break;
                 }
             }
+            parser.addDuplicatedBytes(response);
 
             Thread.sleep(waitingTime);
             logger.info("Time need update. Set time to {}", dt);
@@ -393,6 +394,7 @@ public class CommunicationService {
             }
             // create new set request created from the existing read response
             byte[] requestUpdateMessage = parser.composeRecord(currentValue, newValue, response, updateRecord);
+            parser.addDuplicatedBytes(response);
 
             logger.debug("Setting new value [{}] for parameter [{}]", newValue, channelId);
 
