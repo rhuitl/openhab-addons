@@ -234,7 +234,7 @@ public class StiebelHeatPumpHandler extends BaseThingHandler {
         }
 
         communicationService = new CommunicationService(serialPortManager, config.port, config.baudRate,
-                config.waitingTime, scheduler);
+                config.waitingTime);
 
         scheduler.schedule(this::getInitialHeatPumpSettings, 0, TimeUnit.SECONDS);
         updateStatus(ThingStatus.UNKNOWN, ThingStatusDetail.HANDLER_CONFIGURATION_PENDING,

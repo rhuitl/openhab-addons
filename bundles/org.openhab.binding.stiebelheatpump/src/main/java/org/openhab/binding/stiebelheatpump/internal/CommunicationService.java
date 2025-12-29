@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
 
 import org.openhab.binding.stiebelheatpump.protocol.DataParser;
 import org.openhab.binding.stiebelheatpump.protocol.ProtocolConnector;
@@ -53,12 +52,12 @@ public class CommunicationService {
     private int waitingTime = 1200;
 
     public CommunicationService(SerialPortManager serialPortManager, String serialPortName, int baudRate,
-            int waitingTime, ScheduledExecutorService scheduler) {
+            int waitingTime) {
         this.waitingTime = waitingTime;
         this.baudRate = baudRate;
         this.serialPortName = serialPortName;
         this.serialPortManager = serialPortManager;
-        this.connector = new SerialConnector(scheduler);
+        this.connector = new SerialConnector();
     }
 
     public void finalizer() {
@@ -239,6 +238,8 @@ public class CommunicationService {
                 success = true;
             } catch (StiebelHeatPumpException e) {
                 logger.warn("Error reading data for {}: {} -> Retry: {}", requestStr, e, count);
+                disconnect();
+                connect();
             } catch (InterruptedException e) {
                 throw new StiebelHeatPumpException(e.toString());
             }
@@ -562,6 +563,7 @@ public class CommunicationService {
         boolean dataAvailable = false;
         int requestRetry = 0;
         int retry = 0;
+        boolean reopenedDevice = false;
         try {
             while (requestRetry < maxRetry) {
                 int numBytesReadTotal = 0;
@@ -583,8 +585,18 @@ public class CommunicationService {
                     return true;
                 }
                 logger.debug("retry request!");
-                retry++;
-                startCommunication();
+                requestRetry++;
+
+                if (requestRetry == maxRetry && !reopenedDevice) {
+                    logger.debug("reopening device");
+                    disconnect();
+                    connect();
+                    requestRetry = 0;
+                    reopenedDevice = true;
+                }
+                if (requestRetry < maxRetry) {
+                    startCommunication();
+                }
             }
             if (!dataAvailable) {
                 logger.warn("heat pump has no data available for request!");
